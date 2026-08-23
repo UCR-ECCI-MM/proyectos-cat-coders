@@ -5,6 +5,7 @@
  # numbers and +,-,*,/
  # ------------------------------------------------------------
 import ply.lex as lex
+import sys
 
 
 # CONSTANTES
@@ -115,10 +116,30 @@ def t_error(t):
 # Build the lexer
 lexer = lex.lex()
 
-
-# Tokenize
-while True:
-     tok = lexer.token()
-     if not tok: 
-         break      # No more input
-     print(tok)
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print("Uso correcto: python calclex.py <archivo.txt>")
+        sys.exit(1)
+        
+    archivo = sys.argv[1]
+    nombre_salida = f"salida_{archivo}"
+    print(f"\nProcesando '{archivo}', se guarda en: '{nombre_salida}'")
+    
+    try:
+        with open(archivo, 'r') as archivo_entrada, open(nombre_salida, 'w') as archivo_salida:
+            data = archivo_entrada.read()
+            lexer.input(data)
+            contador = 0 
+            # Tokenize
+            while True:
+                tok = lexer.token()
+                if not tok: break
+                contador += 1
+                archivo_salida.write(f"{tok}\n")
+                #imprimimos 5 para evitar saturar la salida de la terminal
+                if contador <= 5: print(tok)
+                    
+        print(f"Se guardaron {contador} tokens válidos.")
+        
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo '{archivo}'.")
