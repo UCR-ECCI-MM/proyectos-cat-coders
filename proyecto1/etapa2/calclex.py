@@ -8,23 +8,53 @@ import ply.lex as lex
  
 # List of token names.   This is always required
 tokens = (
-    'NUMBER',
-    'PLUS',
-    'MINUS',
-    'TIMES',
-    'DIVIDE',
-    'LPAREN',
-    'RPAREN',
+    'RECORD_TYPE',
+    'TIMESTAMP',
+    'STATE',
+    'PEER_IP',
+    'PEER_AS',
+    'DESTINATION_PREFIX',
+    'AS_PATH',
 )
  
 # Regular expression rules for simple tokens
-t_PLUS    = r'\+'
-t_MINUS   = r'-'
-t_TIMES   = r'\*'
-t_DIVIDE  = r'/'
-t_LPAREN  = r'\('
-t_RPAREN  = r'\)'
- 
+def t_RECORD_TYPE(t):
+    r'TABLE_DUMP2'
+    return t
+
+#TODO
+#def t_timestamp_TIMESTAMP(t):
+
+def t_STATE(t):
+    r'[BAW]'
+    return t
+
+#TODO
+#def t_PEER_IP(t):
+
+#TODO
+#def t_PEER_AS(t):
+
+
+#TODO
+#def t_DESTINATION_PREFIX(t):
+
+#TODO
+#def t_AS_PATH(t):
+
+
+
+
+
+
+
+
+
+
+
+
+#CODIGO QUE VENIA CON EL PROGRAMA
+
 # A regular expression rule with some action code
 def t_NUMBER(t):
      r'\d+'
