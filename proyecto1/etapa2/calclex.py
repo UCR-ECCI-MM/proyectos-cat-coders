@@ -14,20 +14,27 @@ tokens = (
     'PEER_IP',
     'PEER_AS',
     'DESTINATION_PREFIX',
-    'AS_PATH',
+    'PIPE',
 )
- 
+
 # Regular expression rules for simple tokens
+t_PIPE = r'\|'
+
+# Regular expression rules with some action code
 def t_RECORD_TYPE(t):
     r'TABLE_DUMP2'
     return t
 
-#TODO
-#def t_timestamp_TIMESTAMP(t):
+def t_TIMESTAMP(t):
+    r'\d{10}'
+    return t
 
 def t_STATE(t):
     r'[BAW]'
     return t
+
+#TODO
+#def t_DESTINATION_PREFIX(t):
 
 #TODO
 #def t_PEER_IP(t):
@@ -35,21 +42,34 @@ def t_STATE(t):
 #TODO
 #def t_PEER_AS(t):
 
-
-#TODO
-#def t_DESTINATION_PREFIX(t):
-
 #TODO
 #def t_AS_PATH(t):
 
 
 
+# A string containing ignored characters (spaces and tabs)
+t_ignore  = ' \t'
+
+ # Define a rule so we can track line numbers
+def t_newline(t):
+     r'\n+'
+     t.lexer.lineno += len(t.value)
+
+# Error handling rule
+def t_error(t):
+     print("Illegal character '%s'" % t.value[0])
+     t.lexer.skip(1)
+
+# Build the lexer
+lexer = lex.lex()
 
 
-
-
-
-
+# Tokenize
+while True:
+     tok = lexer.token()
+     if not tok: 
+         break      # No more input
+     print(tok)
 
 
 
