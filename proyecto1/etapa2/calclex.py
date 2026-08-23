@@ -1,20 +1,14 @@
-# ------------------------------------------------------------
- # calclex.py
- #
- # tokenizer for a simple expression evaluator for
- # numbers and +,-,*,/
- # ------------------------------------------------------------
 import ply.lex as lex
 import sys
 
 
 # CONSTANTES
 ''' 
-El TIMESTAMP se maneja como un número entero CON SIGNO de 32 bits. 
-Al reservar 1 bit para el signo (+/-), nos quedan 31 bits para el valor, por eso
-su máximo es 2^31 - 1 = 2147483647
+Según el estándar de la IETF, para el formato MRT el TIMESTAMP representa los segundos transcurridos
+desde el 1 de enero de 1970, se maneja como un número entero sin signo de 32 bits. 
+Por lo tanto, su valor máximo es 2^32 - 1 = 4294967295
 '''
-MAX_TIMESTAMP = 2147483647
+MAX_TIMESTAMP = 4294967295
 ''' 
 El AS tiene 4 octetos(32 bits) que se puede representar como un numero 
 entero maximo que es 2^32 = 4294967296, pero como se comienza desde 0 el maximo 
@@ -40,12 +34,20 @@ tokens = (
 t_PIPE = r'\|'
 
 # Regular expression rules with some action code
+def t_DESTINATION_PREFIX(t):
+    r'([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])/([3][0-1]|[2][0-9]|[1][0-9]|[1-9])(?![0-9])'
+    return t
+
+def t_PEER_IP(t):
+    r'([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])(?![0-9])'
+    return t
+
 def t_RECORD_TYPE(t):
     r'TABLE_DUMP2'
     return t
 
 def t_TIMESTAMP(t):
-    r'\d{10}(?!\d)'
+    r'\d{1,10}(?!\d)'
     t.value = int(t.value)
     
     if t.value > MAX_TIMESTAMP:
@@ -57,15 +59,6 @@ def t_TIMESTAMP(t):
 def t_STATE(t):
     r'[BAW]'
     return t
-
-def t_DESTINATION_PREFIX(t):
-    r'([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])/([3][0-1]|[2][0-9]|[1][0-9]|[1-9])(?![0-9])'
-    return t
-
-def t_PEER_IP(t):
-    r'([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])(?![0-9])'
-    return t
-
 
 def t_PEER_AS(t):
     r'(?<!\d)\d{1,10}(?!\d)'
