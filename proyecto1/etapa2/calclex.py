@@ -1,6 +1,6 @@
 import ply.lex as lex
 import sys
-
+import os
 
 # CONSTANTES
 ''' 
@@ -113,7 +113,10 @@ if __name__ == '__main__':
         sys.exit(1)
         
     archivo = sys.argv[1]
-    nombre_salida = f"salida_{archivo}"
+    os.makedirs("output", exist_ok=True)
+
+    nombre_archivo = os.path.basename(archivo)
+    nombre_salida = os.path.join("output", f"salida_{nombre_archivo}")
     print(f"\nProcesando '{archivo}', se guarda en: '{nombre_salida}'")
     
     try:

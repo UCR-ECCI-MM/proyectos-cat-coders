@@ -2,7 +2,7 @@ PYTHON = python3
 VENV = .venv
 VENV_PYTHON = $(VENV)/bin/python
 PROGRAMA = calclex.py
-ARCHIVO = prueba.txt
+ARCHIVO = input/prueba.txt
 
 .PHONY: setup run clean clean-all
 
