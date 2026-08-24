@@ -35,7 +35,7 @@ t_PIPE = r'\|'
 
 # Regular expression rules with some action code
 def t_DESTINATION_PREFIX(t):
-    r'([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])/([3][0-1]|[2][0-9]|[1][0-9]|[1-9])(?![0-9])'
+    r'([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])/([3][0-1]|[2][0-9]|[1][0-9]|[1-9]|[0])(?![0-9])'
     return t
 
 def t_PEER_IP(t):
@@ -45,30 +45,6 @@ def t_PEER_IP(t):
 def t_RECORD_TYPE(t):
     r'TABLE_DUMP2'
     return t
-
-def t_TIMESTAMP(t):
-    r'\d{1,10}(?!\d)'
-    t.value = int(t.value)
-    
-    if t.value > MAX_TIMESTAMP:
-        print(f"Error léxico: Timestamp fuera de rango: {t.value}")
-        return None
-    else:
-        return t
-
-def t_STATE(t):
-    r'[BAW]'
-    return t
-
-def t_PEER_AS(t):
-    r'(?<!\d)\d{1,10}(?!\d)'
-    if int(t.value) > AS_VALOR_MAXIMO:
-        print(f"AS fuera del rango valido: {t.value}")
-        return None
-
-    t.value = int(t.value)
-    return t
-
 
 def t_AS_PATH(t):
     r'(?<!\d)\d{1,10}(?:[ \t]+\d{1,10})*[ \t]*(?=\r?\n|$)'
@@ -91,6 +67,29 @@ def t_AS_PATH(t):
 
     return t
 
+
+def t_TIMESTAMP(t):
+    r'\d{10}(?!\d)'
+    t.value = int(t.value)
+    
+    if t.value > MAX_TIMESTAMP:
+        print(f"Error léxico: Timestamp fuera de rango: {t.value}")
+        return None
+    else:
+        return t
+
+def t_STATE(t):
+    r'[BAW]'
+    return t
+
+def t_PEER_AS(t):
+    r'(?<!\d)\d{1,10}(?!\d)'
+    if int(t.value) > AS_VALOR_MAXIMO:
+        print(f"AS fuera del rango valido: {t.value}")
+        return None
+
+    t.value = int(t.value)
+    return t
 
 
 # A string containing ignored characters (spaces and tabs)
