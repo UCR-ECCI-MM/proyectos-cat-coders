@@ -36,7 +36,7 @@ t_PIPE = r'\|'
 
 # Regular expression rules with some action code
 def t_DESTINATION_PREFIX(t):
-    r'([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])/([3][0-1]|[2][0-9]|[1][0-9]|[1-9])(?![0-9])'
+    r'([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])/([3][0-1]|[2][0-9]|[1][0-9]|[1-9]|[0])(?![0-9])'
     return t
 
 def t_PEER_IP(t):
@@ -47,9 +47,30 @@ def t_RECORD_TYPE(t):
     r'TABLE_DUMP2'
     return t
 
+def t_AS_PATH(t):
+    r'(?<!\d)\d{1,10}(?:[ \t]+\d{1,10})*[ \t]*(?=\r?\n|$)'
+
+     #TODO
+    ''' 
+        r'\d{1,10}(?!\d)' agregar a la presentacion porque aqui se iban aceptando los ultimos y no deberia ser asi
+        53046 61626 14840 3356 7493232523432
+    
+        53046 61626 14840 3356 749
+        
+    '\d{1,10}(?:[ \t]+\d{1,10})*[ \t]*(?=\r?\n|$)'
+    '''
+    lista_as = t.value.split()
+
+    for asn in lista_as:
+        if int(asn) > AS_VALOR_MAXIMO:
+            print(f"AS fuera del rango valido: {asn}")
+            return None
+
+    return t
+
+
 def t_TIMESTAMP(t):
     r'\d{10}(?!\d)'
-    #r'\d{1,10}(?!\d)' Se comento porque podrian ser numero entre 1 y 10 digitos pero es de 10 siempre
     t.value = int(t.value)
     
     if t.value > MAX_TIMESTAMP:
@@ -90,9 +111,6 @@ def t_PEER_AS(t):
 
     t.value = int(t.value)
     return t
-
-
-
 
 
 # A string containing ignored characters (spaces and tabs)
