@@ -4,11 +4,12 @@ import sys
 
 # CONSTANTES
 ''' 
-Según el estándar de la IETF, para el formato MRT el TIMESTAMP representa los segundos transcurridos
-desde el 1 de enero de 1970, se maneja como un número entero sin signo de 32 bits. 
-Por lo tanto, su valor máximo es 2^32 - 1 = 4294967295
+Según el estándar de la IETF, para el formato MRT el TIMESTAMP es un campo de 
+4 octetos que representa la la cantidad de segundos transcurridos desde el 
+1 de enero de 1970 a las 00:00:00 UTC.
+El ultimo valor representable es 0x7FFFFFFF, que en decimal 2147483647
 '''
-MAX_TIMESTAMP = 4294967295
+MAX_TIMESTAMP = 2147483647
 ''' 
 El AS tiene 4 octetos(32 bits) que se puede representar como un numero 
 entero maximo que es 2^32 = 4294967296, pero como se comienza desde 0 el maximo 
@@ -47,7 +48,8 @@ def t_RECORD_TYPE(t):
     return t
 
 def t_TIMESTAMP(t):
-    r'\d{1,10}(?!\d)'
+    r'\d{10}(?!\d)'
+    #r'\d{1,10}(?!\d)' Se comento porque podrian ser numero entre 1 y 10 digitos pero es de 10 siempre
     t.value = int(t.value)
     
     if t.value > MAX_TIMESTAMP:
@@ -60,6 +62,26 @@ def t_STATE(t):
     r'[BAW]'
     return t
 
+def t_AS_PATH(t):
+    r'(?<!\d)\d{1,10}(?:[ \t]+\d{1,10})*[ \t]*(?=\r?\n|$)'
+
+     #TODO PRESENTACION
+    #    r'\d{1,10}(?!\d)' agregar a la presentacion porque aqui se iban aceptando los ultimos y no deberia ser asi
+    #    53046 61626 14840 3356 7493232523432
+    #
+    #    53046 61626 14840 3356 749
+    #    
+    #'\d{1,10}(?:[ \t]+\d{1,10})*[ \t]*(?=\r?\n|$)'
+    #
+    lista_as = t.value.split()
+
+    for asn in lista_as:
+        if int(asn) > AS_VALOR_MAXIMO:
+            print(f"AS fuera del rango valido: {asn}")
+            return None
+
+    return t
+
 def t_PEER_AS(t):
     r'(?<!\d)\d{1,10}(?!\d)'
     if int(t.value) > AS_VALOR_MAXIMO:
@@ -70,26 +92,6 @@ def t_PEER_AS(t):
     return t
 
 
-def t_AS_PATH(t):
-    r'(?<!\d)\d{1,10}(?:[ \t]+\d{1,10})*[ \t]*(?=\r?\n|$)'
-
-     #TODO
-    ''' 
-        r'\d{1,10}(?!\d)' agregar a la presentacion porque aqui se iban aceptando los ultimos y no deberia ser asi
-        53046 61626 14840 3356 7493232523432
-    
-        53046 61626 14840 3356 749
-        
-    '\d{1,10}(?:[ \t]+\d{1,10})*[ \t]*(?=\r?\n|$)'
-    '''
-    lista_as = t.value.split()
-
-    for asn in lista_as:
-        if int(asn) > AS_VALOR_MAXIMO:
-            print(f"AS fuera del rango valido: {asn}")
-            return None
-
-    return t
 
 
 
@@ -103,7 +105,7 @@ def t_newline(t):
 
 # Error handling rule
 def t_error(t):
-     print("Illegal character '%s'" % t.value[0])
+     print(f"Caracter ilegal '{t.value[0]}' en línea {t.lineno}")
      t.lexer.skip(1)
 
 # Build the lexer
