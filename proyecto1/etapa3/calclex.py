@@ -56,6 +56,10 @@ def t_RECORD_TYPE(t):
     r'TABLE_DUMP2'
     return t
 
+def t_LONGNUMBER(t):
+    r'(?<!\d)\d{11,}(?!\d)'
+    print(f"Error léxico en línea {t.lineno}: '{t.value}' tiene {len(t.value)} digitos, el maximo del formato es 10")
+
 def t_NUMBER10(t):
     r'(?<!\d)\d{10}(?!\d)'
     t.value = int(t.value)
