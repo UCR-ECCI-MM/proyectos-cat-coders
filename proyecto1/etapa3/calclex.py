@@ -3,19 +3,19 @@ import sys
 import os
 
 # CONSTANTES
-''' 
-Según el estándar de la IETF, para el formato MRT el TIMESTAMP es un campo de 
-4 octetos que representa la la cantidad de segundos transcurridos desde el 
+'''
+Según el estándar de la IETF, para el formato MRT el TIMESTAMP es un campo de
+4 octetos que representa la la cantidad de segundos transcurridos desde el
 1 de enero de 1970 a las 00:00:00 UTC.
 El ultimo valor representable es 0x7FFFFFFF, que en decimal 2147483647
 '''
 MAX_TIMESTAMP = 2147483647
-''' 
-El AS tiene 4 octetos(32 bits) que se puede representar como un numero 
-entero maximo que es 2^32 = 4294967296, pero como se comienza desde 0 el maximo 
+'''
+El AS tiene 4 octetos(32 bits) que se puede representar como un numero
+entero maximo que es 2^32 = 4294967296, pero como se comienza desde 0 el maximo
 pasa a ser 2^32 - 1 = 4294967295
 '''
-AS_VALOR_MAXIMO = 4294967295 
+AS_VALOR_MAXIMO = 4294967295
 
 
 # List of token names.   This is always required
@@ -28,7 +28,7 @@ tokens = (
     'DESTINATION_PREFIX',
     'AS_PATH',
     'PIPE',
-    
+
 )
 
 # Regular expression rules for simple tokens
@@ -50,7 +50,7 @@ def t_RECORD_TYPE(t):
 def t_TIMESTAMP(t):
     r'\d{10}(?!\d)'
     t.value = int(t.value)
-    
+
     if t.value > MAX_TIMESTAMP:
         print(f"Error léxico: Timestamp fuera de rango: {t.value}")
         return None
@@ -64,14 +64,6 @@ def t_STATE(t):
 def t_AS_PATH(t):
     r'(?<!\d)(\d{1,10}|\{\d{1,10}(,\d{1,10})*\})([ \t]+(\d{1,10}|\{\d{1,10}(,\d{1,10})*\}))*[ \t]*(?=\r?\n|$)'
 
-     #TODO PRESENTACION
-    #    r'\d{1,10}(?!\d)' agregar a la presentacion porque aqui se iban aceptando los ultimos y no deberia ser asi
-    #    53046 61626 14840 3356 7493232523432
-    #
-    #    53046 61626 14840 3356 749
-    #    
-    #'\d{1,10}(?:[ \t]+\d{1,10})*[ \t]*(?=\r?\n|$)'
-    #
     lista_as = t.value.replace('{', ' ').replace('}', ' ').replace(',', ' ').split()
 
     for asn in lista_as:
@@ -111,19 +103,19 @@ if __name__ == '__main__':
     if len(sys.argv) != 2:
         print("Uso correcto: python calclex.py <archivo.txt>")
         sys.exit(1)
-        
+
     archivo = sys.argv[1]
     os.makedirs("output", exist_ok=True)
 
     nombre_archivo = os.path.basename(archivo)
     nombre_salida = os.path.join("output", f"salida_{nombre_archivo}")
     print(f"\nProcesando '{archivo}', se guarda en: '{nombre_salida}'")
-    
+
     try:
         with open(archivo, 'r') as archivo_entrada, open(nombre_salida, 'w') as archivo_salida:
             data = archivo_entrada.read()
             lexer.input(data)
-            contador = 0 
+            contador = 0
             # Tokenize
             while True:
                 tok = lexer.token()
@@ -132,8 +124,8 @@ if __name__ == '__main__':
                 archivo_salida.write(f"{tok}\n")
                 #imprimimos 5 para evitar saturar la salida de la terminal
                 if contador <= 5: print(tok)
-                    
+
         print(f"Se guardaron {contador} tokens válidos.")
-        
+
     except FileNotFoundError:
         print(f"Error: No se encontró el archivo '{archivo}'.")
