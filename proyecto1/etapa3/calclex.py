@@ -16,7 +16,7 @@ El AS tiene 4 octetos(32 bits) que se puede representar como un numero
 entero maximo que es 2^32 = 4294967296, pero como se comienza desde 0 el maximo
 pasa a ser 2^32 - 1 = 4294967295
 '''
-AS_VALOR_MAXIMO = 4294967295
+AS_VALOR_MAXIMO = 4294967295 # mismo caso que MAX_TIMESTAMP, la revision de rango del AS pasa al parser
 
 
 # List of token names.   This is always required
@@ -25,9 +25,8 @@ tokens = (
     'NUMBER10',
     'STATE',
     'PEER_IP',
-    'PEER_AS',
+    'NUMBER1TO9',
     'DESTINATION_PREFIX',
-    'AS_PATH',
     'PIPE',
     'LBRACE',
     'RBRACE',
@@ -65,24 +64,9 @@ def t_STATE(t):
     r'[BAW]'
     return t
 
-def t_AS_PATH(t):
-    r'(?<!\d)(\d{1,10}|\{\d{1,10}(,\d{1,10})*\})([ \t]+(\d{1,10}|\{\d{1,10}(,\d{1,10})*\}))*[ \t]*(?=\r?\n|$)'
-
-    lista_as = t.value.replace('{', ' ').replace('}', ' ').replace(',', ' ').split()
-
-    for asn in lista_as:
-        if int(asn) > AS_VALOR_MAXIMO:
-            print(f"AS fuera del rango valido: {asn}")
-            return None
-
-    return t
-
-def t_PEER_AS(t):
-    r'(?<!\d)\d{1,10}(?!\d)'
-    if int(t.value) > AS_VALOR_MAXIMO:
-        print(f"AS fuera del rango valido: {t.value}")
-        return None
-
+# AS_PATH y PEER_AS se van y los reemplaza NUMBER1TO9
+def t_NUMBER1TO9(t):
+    r'(?<!\d)\d{1,9}(?!\d)'
     t.value = int(t.value)
     return t
 
