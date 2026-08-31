@@ -9,7 +9,8 @@ Según el estándar de la IETF, para el formato MRT el TIMESTAMP es un campo de
 1 de enero de 1970 a las 00:00:00 UTC.
 El ultimo valor representable es 0x7FFFFFFF, que en decimal 2147483647
 '''
-MAX_TIMESTAMP = 2147483647
+MAX_TIMESTAMP = 2147483647 # ya no se usa
+
 '''
 El AS tiene 4 octetos(32 bits) que se puede representar como un numero
 entero maximo que es 2^32 = 4294967296, pero como se comienza desde 0 el maximo
@@ -21,7 +22,7 @@ AS_VALOR_MAXIMO = 4294967295
 # List of token names.   This is always required
 tokens = (
     'RECORD_TYPE',
-    'TIMESTAMP',
+    'NUMBER10',
     'STATE',
     'PEER_IP',
     'PEER_AS',
@@ -55,15 +56,10 @@ def t_RECORD_TYPE(t):
     r'TABLE_DUMP2'
     return t
 
-def t_TIMESTAMP(t):
-    r'\d{10}(?!\d)'
+def t_NUMBER10(t):
+    r'(?<!\d)\d{10}(?!\d)'
     t.value = int(t.value)
-
-    if t.value > MAX_TIMESTAMP:
-        print(f"Error léxico: Timestamp fuera de rango: {t.value}")
-        return None
-    else:
-        return t
+    return t
 
 def t_STATE(t):
     r'[BAW]'
