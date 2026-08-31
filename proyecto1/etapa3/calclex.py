@@ -28,11 +28,19 @@ tokens = (
     'DESTINATION_PREFIX',
     'AS_PATH',
     'PIPE',
+    'LBRACE',
+    'RBRACE',
+    'COMMA',
 
 )
 
 # Regular expression rules for simple tokens
 t_PIPE = r'\|'
+
+# Las llaves y la coma pasan a ser tokens propios
+t_LBRACE = r'\{'
+t_RBRACE = r'\}'
+t_COMMA = r','
 
 # Regular expression rules with some action code
 def t_DESTINATION_PREFIX(t):
