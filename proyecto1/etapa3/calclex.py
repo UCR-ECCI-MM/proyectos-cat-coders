@@ -26,6 +26,7 @@ tokens = (
     'STATE',
     'PEER_IP',
     'NUMBER1TO9',
+    'NEWLINE',
     'DESTINATION_PREFIX',
     'PIPE',
     'LBRACE',
@@ -75,9 +76,10 @@ def t_NUMBER1TO9(t):
 t_ignore  = ' \t'
 
  # Define a rule so we can track line numbers
-def t_newline(t):
+def t_NEWLINE(t):
      r'\n+'
      t.lexer.lineno += len(t.value)
+     return t
 
 # Error handling rule
 def t_error(t):
