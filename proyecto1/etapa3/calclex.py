@@ -108,6 +108,8 @@ if __name__ == '__main__':
     try:
         with open(archivo, 'r') as archivo_entrada, open(nombre_salida, 'w') as archivo_salida:
             data = archivo_entrada.read()
+            if not data.endswith('\n'):
+                data += '\n'
             lexer.input(data)
             contador = 0
             # Tokenize
