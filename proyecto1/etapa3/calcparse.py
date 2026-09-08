@@ -19,8 +19,22 @@ def p_registro(p):
 
 def p_as_path(p):
     '''
-    AS_PATH : AS_PATH NUMERO_AS
-            | NUMERO_AS
+    AS_PATH : AS_PATH ELEMENTO_AS
+            | ELEMENTO_AS
+    '''
+    pass
+
+def p_elemento_as(p):
+    '''
+    ELEMENTO_AS : NUMERO_AS
+                | LBRACE LISTA_AS RBRACE
+    '''
+    pass
+
+def p_lista_as(p):
+    '''
+    LISTA_AS : LISTA_AS COMMA NUMERO_AS
+             | NUMERO_AS
     '''
     pass
 
@@ -30,10 +44,6 @@ def p_numero_as(p):
               | NUMBER10
     '''
     pass
-
-#TODO -> Falta de agregar estas funciones
-#LISTA_AS
-#ELEMENTO_AS
 
 
 def p_error(p):
