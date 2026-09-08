@@ -2,6 +2,7 @@ PYTHON = python3
 VENV = .venv
 VENV_PYTHON = $(VENV)/bin/python
 PROGRAMA = calclex.py
+PARSER = calcparse.py
 ARCHIVO = input/prueba.txt
 DUMPS = ../etapa2/input
 
@@ -16,7 +17,7 @@ $(VENV)/.installed:
 	touch $(VENV)/.installed
 
 run: setup
-	$(VENV_PYTHON) $(PROGRAMA) $(ARCHIVO)
+	$(VENV_PYTHON) $(PARSER) $(ARCHIVO)
 
 CHUNK = chunk_aa.txt
 run-dump: setup
