@@ -29,3 +29,14 @@ clean:
 
 clean-all: clean
 	rm -rf $(VENV)
+
+TEST_FILES = archivo.txt registro.txt as_path.txt elemento_as.txt lista_as.txt numero_as.txt prueba.txt
+
+.PHONY: test
+
+test: setup
+	@for f in $(TEST_FILES); do \
+		echo "==================== $$f ===================="; \
+		$(VENV_PYTHON) $(PARSER) input/$$f; \
+		echo ""; \
+	done
