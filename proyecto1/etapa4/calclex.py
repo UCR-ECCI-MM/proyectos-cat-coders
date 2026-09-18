@@ -2,23 +2,6 @@ import ply.lex as lex
 import sys
 import os
 
-# CONSTANTES
-'''
-Según el estándar de la IETF, para el formato MRT el TIMESTAMP es un campo de
-4 octetos que representa la la cantidad de segundos transcurridos desde el
-1 de enero de 1970 a las 00:00:00 UTC.
-El ultimo valor representable es 0x7FFFFFFF, que en decimal 2147483647
-'''
-MAX_TIMESTAMP = 2147483647 # ya no se usa
-
-'''
-El AS tiene 4 octetos(32 bits) que se puede representar como un numero
-entero maximo que es 2^32 = 4294967296, pero como se comienza desde 0 el maximo
-pasa a ser 2^32 - 1 = 4294967295
-'''
-AS_VALOR_MAXIMO = 4294967295 # mismo caso que MAX_TIMESTAMP, la revision de rango del AS pasa al parser
-
-
 # List of token names.   This is always required
 tokens = (
     'RECORD_TYPE',
@@ -45,11 +28,11 @@ t_COMMA = r','
 
 # Regular expression rules with some action code
 def t_DESTINATION_PREFIX(t):
-    r'([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])/([3][0-1]|[2][0-9]|[1][0-9]|[1-9]|[0])(?![0-9])'
+    r'([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])/([3][0-1]|[2][0-9]|[1][0-9]|[1-9]|[0])'
     return t
 
 def t_PEER_IP(t):
-    r'([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])(?![0-9])'
+    r'([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9])'
     return t
 
 def t_RECORD_TYPE(t):
@@ -57,12 +40,12 @@ def t_RECORD_TYPE(t):
     return t
 
 def t_LONGNUMBER(t):
-    r'(?<!\d)\d{11,}(?!\d)'
+    r'\d{11,}'
     t.lexer.error_lexico = True
     print(f"Error léxico en línea {t.lineno}: '{t.value}' tiene {len(t.value)} digitos, el maximo del formato es 10")
 
 def t_NUMBER10(t):
-    r'(?<!\d)\d{10}(?!\d)'
+    r'\d{10}'
     t.value = int(t.value)
     return t
 
@@ -72,7 +55,7 @@ def t_STATE(t):
 
 # AS_PATH y PEER_AS se van y los reemplaza NUMBER1TO9
 def t_NUMBER1TO9(t):
-    r'(?<!\d)\d{1,9}(?!\d)'
+    r'\d{1,9}'
     t.value = int(t.value)
     return t
 
