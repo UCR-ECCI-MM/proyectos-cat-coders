@@ -76,10 +76,3 @@ def analizar_archivo(archivo):
     except FileNotFoundError:
         print(f"Error: No se encontró el archivo '{archivo}'.")
         sys.exit(1)
-
-
-if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        sys.exit(1)
-
-    analizar_archivo(sys.argv[1])

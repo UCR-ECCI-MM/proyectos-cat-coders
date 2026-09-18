@@ -2,7 +2,7 @@ PYTHON = python3
 VENV = .venv
 VENV_PYTHON = $(VENV)/bin/python
 PROGRAMA = calclex.py
-PARSER = calcparse.py
+MAIN = main.py
 ARCHIVO = input/prueba.txt
 DUMPS = ../etapa2/input
 
@@ -17,7 +17,7 @@ $(VENV)/.installed:
 	touch $(VENV)/.installed
 
 run: setup
-	$(VENV_PYTHON) $(PARSER) $(ARCHIVO)
+	$(VENV_PYTHON) $(MAIN) $(ARCHIVO)
 
 CHUNK = chunk_aa.txt
 run-dump: setup
@@ -37,6 +37,6 @@ TEST_FILES = archivo.txt registro.txt as_path.txt elemento_as.txt lista_as.txt n
 test: setup
 	@for f in $(TEST_FILES); do \
 		echo "==================== $$f ===================="; \
-		$(VENV_PYTHON) $(PARSER) input/$$f; \
+		$(VENV_PYTHON) $(MAIN) input/$$f; \
 		echo ""; \
 	done
