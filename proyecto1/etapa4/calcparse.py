@@ -68,9 +68,10 @@ def analizar_archivo(archivo):
             data += '\n'
 
         lexer.lineno = 1
+        lexer.error_lexico = False
         parser.parse(data, lexer=lexer)
 
-        if not error_sintactico:
+        if not error_sintactico and not lexer.error_lexico:
             print("Archivo sintácticamente correcto.")
 
     except FileNotFoundError:

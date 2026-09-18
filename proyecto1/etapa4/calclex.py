@@ -58,6 +58,7 @@ def t_RECORD_TYPE(t):
 
 def t_LONGNUMBER(t):
     r'(?<!\d)\d{11,}(?!\d)'
+    t.lexer.error_lexico = True
     print(f"Error léxico en línea {t.lineno}: '{t.value}' tiene {len(t.value)} digitos, el maximo del formato es 10")
 
 def t_NUMBER10(t):
@@ -87,11 +88,15 @@ def t_NEWLINE(t):
 
 # Error handling rule
 def t_error(t):
+     t.lexer.error_lexico = True
      print(f"Caracter ilegal '{t.value[0]}' en línea {t.lineno}")
      t.lexer.skip(1)
 
 # Build the lexer
 lexer = lex.lex()
+
+# El parser la revisa para no dar por correcto un archivo que el lexer rechazo
+lexer.error_lexico = False
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
