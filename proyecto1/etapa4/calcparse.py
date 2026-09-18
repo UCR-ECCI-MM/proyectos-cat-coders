@@ -59,12 +59,7 @@ def p_error(p):
 parser = yacc.yacc()
 
 
-if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        sys.exit(1)
-
-    archivo = sys.argv[1]
-
+def analizar_archivo(archivo):
     try:
         with open(archivo, 'r') as archivo_entrada:
             data = archivo_entrada.read()
@@ -81,3 +76,10 @@ if __name__ == '__main__':
     except FileNotFoundError:
         print(f"Error: No se encontró el archivo '{archivo}'.")
         sys.exit(1)
+
+
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        sys.exit(1)
+
+    analizar_archivo(sys.argv[1])
