@@ -1,4 +1,6 @@
 PYTHON = python3
+# Responsable: Marina.
+# TODO: Agregar un comando para ejecutar las pruebas de la etapa 4.
 VENV = .venv
 VENV_PYTHON = $(VENV)/bin/python
 PROGRAMA = calclex.py

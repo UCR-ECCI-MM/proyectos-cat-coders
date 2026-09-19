@@ -1,4 +1,4 @@
-# Etapa 3 - Parser
+# Etapa 4 - Creación de estructuras de datos
 
 ## Requisitos (Linux)
 
@@ -26,7 +26,7 @@ La primera vez que se ejecuta va a pasar lo siguiente:
 1. Se crea un entorno virtual llamado `.venv`.
 2. Se actualiza `pip`.
 3. Se instala la librería `ply`.
-4. Se ejecuta `calcparse.py` usando `input/prueba.txt`.
+4. Se ejecuta `main.py`, que llama al parser usando `input/prueba.txt`.
 
 Y para volver a ejecutar es igual con el mismo comando:
 

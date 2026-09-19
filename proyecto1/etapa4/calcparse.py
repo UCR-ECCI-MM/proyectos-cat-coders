@@ -2,8 +2,7 @@ import sys
 import ply.yacc as yacc
 from calclex import tokens, lexer
 
-# TODO: Crear diccionarios para buscar rutas por AS y por prefijo.
-# TODO: Crear un grafo con las conexiones entre AS de cada ruta.
+# Responsable: Sebas.
 
 error_sintactico = False
 
@@ -12,15 +11,14 @@ def p_archivo(p):
     archivo : archivo registro
             | registro
     '''
-    # TODO: Guardar cada registro en los diccionarios y actualizar el grafo.
+    # TODO: Guardar cada registro válido en las estructuras y actualizar el grafo.
     pass
 
 def p_registro(p):
     '''
     registro : RECORD_TYPE PIPE NUMBER10 PIPE STATE PIPE PEER_IP PIPE numero_as PIPE DESTINATION_PREFIX PIPE as_path NEWLINE
     '''
-    # TODO: Guardar los siete campos leídos en un objeto o diccionario.
-    # TODO: Validar que el Peer AS coincida con el primer AS del AS Path.
+    # TODO: Guardar los siete campos en un registro y validar el Peer AS con el inicio del path.
     pass
 
 def p_as_path(p):
@@ -28,7 +26,7 @@ def p_as_path(p):
     as_path : as_path elemento_as
             | elemento_as
     '''
-    # TODO: Construir la lista ordenada de AS de la ruta.
+    # TODO: Construir la lista de AS de la ruta, conservando el orden y los conjuntos.
     pass
 
 def p_elemento_as(p):
@@ -36,8 +34,7 @@ def p_elemento_as(p):
     elemento_as : numero_as
                 | LBRACE lista_as RBRACE
     '''
-        # TODO: Devolver un AS individual o un conjunto si viene entre llaves.
-
+    # TODO: Devolver un AS individual o un conjunto si viene entre llaves.
     pass
 
 def p_lista_as(p):
@@ -53,6 +50,7 @@ def p_numero_as(p):
     numero_as : NUMBER1TO9
               | NUMBER10
     '''
+    # TODO: Devolver el número de AS.
     pass
 
 
@@ -70,6 +68,7 @@ parser = yacc.yacc()
 
 
 def analizar_archivo(archivo):
+    # TODO: Iniciar los datos y errores por archivo y devolver las estructuras si el análisis fue válido.
     try:
         with open(archivo, 'r') as archivo_entrada:
             data = archivo_entrada.read()
