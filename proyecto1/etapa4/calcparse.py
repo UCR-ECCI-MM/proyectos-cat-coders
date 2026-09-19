@@ -2,6 +2,9 @@ import sys
 import ply.yacc as yacc
 from calclex import tokens, lexer
 
+# TODO: Crear diccionarios para buscar rutas por AS y por prefijo.
+# TODO: Crear un grafo con las conexiones entre AS de cada ruta.
+
 error_sintactico = False
 
 def p_archivo(p):
@@ -9,12 +12,15 @@ def p_archivo(p):
     archivo : archivo registro
             | registro
     '''
+    # TODO: Guardar cada registro en los diccionarios y actualizar el grafo.
     pass
 
 def p_registro(p):
     '''
     registro : RECORD_TYPE PIPE NUMBER10 PIPE STATE PIPE PEER_IP PIPE numero_as PIPE DESTINATION_PREFIX PIPE as_path NEWLINE
     '''
+    # TODO: Guardar los siete campos leídos en un objeto o diccionario.
+    # TODO: Validar que el Peer AS coincida con el primer AS del AS Path.
     pass
 
 def p_as_path(p):
@@ -22,6 +28,7 @@ def p_as_path(p):
     as_path : as_path elemento_as
             | elemento_as
     '''
+    # TODO: Construir la lista ordenada de AS de la ruta.
     pass
 
 def p_elemento_as(p):
@@ -29,6 +36,8 @@ def p_elemento_as(p):
     elemento_as : numero_as
                 | LBRACE lista_as RBRACE
     '''
+        # TODO: Devolver un AS individual o un conjunto si viene entre llaves.
+
     pass
 
 def p_lista_as(p):
@@ -36,6 +45,7 @@ def p_lista_as(p):
     lista_as : lista_as COMMA numero_as
              | numero_as
     '''
+    # TODO: Reunir los AS que están dentro de las llaves.
     pass
 
 def p_numero_as(p):
