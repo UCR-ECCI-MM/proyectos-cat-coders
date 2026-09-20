@@ -71,7 +71,7 @@ def p_as_path(p):
     if len(p) == 2:
         p[0] = [p[1]]
     else:
-        # p[1] es la ruta construida entonces usamo append para seguir el orden 
+        # p[1] es la ruta construida entonces usamos append para seguir el orden 
         # y las repeticiones sin copiar toda la lista.
         p[1].append(p[2])
         p[0] = p[1]
@@ -153,18 +153,18 @@ def analizar_archivo(archivo):
     parser.grafo = crear_grafo()
     parser.parse(data, lexer=lexer)
 
-    # Se descartan los resultados si hubon errores
+    # Se descartan los resultados si hubo errores
     if error_sintactico or lexer.error_lexico or parser.error_semantico:
         parser.estructuras = None
         parser.grafo = None
         return None
 
-    # Verificar que los otros modulos esten implementeados o no devuelven los contenedores
+    # Verificar que los otros modulos esten implementados o no devuelven los contenedores
     if parser.estructuras is None or parser.grafo is None:
         print("Error: falta implementar crear_estructuras o crear_grafo para completar la etapa 4.")
         return None
 
-    # En caso de que todo este correcto se devuelven ambas partes para que el main puedo acceder a ellas
+    # En caso de que todo este correcto se devuelven ambas partes para que el main pueda acceder a ellas
     return {
         'estructuras': parser.estructuras, 
         'grafo': parser.grafo
