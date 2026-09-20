@@ -1,13 +1,27 @@
 import sys
-
+from pprint import pprint
 from calcparse import analizar_archivo
 
 # Responsable: Sebas.
-# TODO: Recibir el resultado del análisis y mostrar las estructuras creadas o los errores.
+def main(argumentos=None):
+    if argumentos is None:
+        argumentos = sys.argv[1:]
+    if len(argumentos) != 1:
+        print('Uso correcto: python main.py <archivo.txt>')
+        return 1
+
+    resultado = analizar_archivo(argumentos[0])
+    if resultado is None:
+        return 1
+
+    print('Archivo analizado correctamente.')
+    print('Estructuras creadas:')
+    pprint(resultado['estructuras'])
+    print('\n')
+    print('Grafo creado:')
+    pprint(resultado['grafo'])
+    return 0
+
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print('Uso correcto: python main.py <archivo.txt>')
-        sys.exit(1)
-
-    analizar_archivo(sys.argv[1])
+    sys.exit(main())
