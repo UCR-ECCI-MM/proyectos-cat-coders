@@ -11,6 +11,12 @@ los de B. Se usa en la funcionalidad 3, rutas entre dos prefijos.
 def crear_grafo():
     return {}
 
+def como_conjunto(elemento):
+    # Un elemento del AS Path es un AS (int) o un conjunto de AS (frozenset)
+    if isinstance(elemento, frozenset):
+        return elemento
+    return {elemento}
+
 def conectar(grafo, a, b):
     if a not in grafo:
         grafo[a] = set()
@@ -19,11 +25,11 @@ def conectar(grafo, a, b):
 def agregar_ruta(grafo, registro):
     as_path = registro['as_path']
 
-    # Cada par de AS seguidos del path es una conexion
+    # Cada par de elementos seguidos del path es una conexion
     for i in range(len(as_path) - 1):
-        a = as_path[i]
-        b = as_path[i + 1]
-        # Si el AS se repite no se conecta consigo mismo
-        if a != b:
-            conectar(grafo, a, b)
-            conectar(grafo, b, a)
+        for a in como_conjunto(as_path[i]):
+            for b in como_conjunto(as_path[i + 1]):
+                # Si el AS se repite no se conecta consigo mismo
+                if a != b:
+                    conectar(grafo, a, b)
+                    conectar(grafo, b, a)
