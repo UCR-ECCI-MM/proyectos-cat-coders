@@ -3,8 +3,6 @@ from calclex import tokens, lexer
 from estructuras import crear_estructuras, agregar_registro
 from grafo import crear_grafo, agregar_ruta
 
-# Responsable: Sebas.
-
 error_sintactico = False
 
 def p_archivo(p):
@@ -20,10 +18,9 @@ def p_archivo(p):
         return
     if p.parser.estructuras is not None and p.parser.grafo is not None:
 
-        # Si se lee correctamente el registro se guarda  y devuelve su id
-        # y se usa ese mismo id para hacer las conexiones del grafo
-        registro_id = agregar_registro(p.parser.estructuras, registro)
-        agregar_ruta(p.parser.grafo, registro, registro_id)
+        # Si se lee correctamente el registro se guarda en las estructuras y sus conexiones en el grafo
+        agregar_registro(p.parser.estructuras, registro)
+        agregar_ruta(p.parser.grafo, registro)
 
 def p_registro(p):
     '''
