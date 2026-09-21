@@ -1,6 +1,4 @@
 PYTHON = python3
-# Responsable: Marina.
-# TODO: Agregar un comando para ejecutar las pruebas de la etapa 4.
 VENV = .venv
 VENV_PYTHON = $(VENV)/bin/python
 PROGRAMA = calclex.py
@@ -38,6 +36,18 @@ TEST_FILES = archivo.txt registro.txt as_path.txt elemento_as.txt lista_as.txt n
 
 test: setup
 	@for f in $(TEST_FILES); do \
+		echo "==================== $$f ===================="; \
+		$(VENV_PYTHON) $(MAIN) input/$$f; \
+		echo ""; \
+	done
+
+# Pruebas de la etapa 4: archivos validos para revisar las estructuras y el grafo
+TEST_FILES_ETAPA4 = as_repetidos.txt as_conjuntos.txt
+
+.PHONY: test-etapa4
+
+test-etapa4: setup
+	@for f in $(TEST_FILES_ETAPA4); do \
 		echo "==================== $$f ===================="; \
 		$(VENV_PYTHON) $(MAIN) input/$$f; \
 		echo ""; \
