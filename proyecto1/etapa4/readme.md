@@ -70,6 +70,19 @@ Por defecto usa `chunk_aa.txt` de `../etapa2/input`. Para usar otro:
 make run-dump CHUNK=chunk_ab.txt
 ```
 
+## Pruebas de la etapa 4
+
+Para revisar que las estructuras y el grafo se crean bien:
+
+```bash
+make test-etapa4
+```
+
+Corre `main.py` con dos archivos válidos de `input/`:
+
+- `as_repetidos.txt`: AS Path con un AS repetido seguido. El AS no queda conectado consigo mismo.
+- `as_conjuntos.txt`: AS Path con conjuntos entre llaves. Cada AS del conjunto se conecta con los vecinos del path, pero no entre ellos.
+
 ## Salida del programa
 
 A diferencia de la etapa 2, el parser no genera un archivo de salida: imprime el
@@ -78,13 +91,15 @@ resultado en la terminal.
 Si el archivo no tiene errores imprime:
 
 ```text
-Archivo sintácticamente correcto.
+Archivo analizado correctamente.
 ```
+
+y después las estructuras y el grafo que se crearon.
 
 Si encuentra un error de sintaxis imprime el token, su tipo y la línea:
 
 ```text
-Error sintáctico en token '83.68.192.0' (PEER_IP) en línea 7.
+Error sintáctico en token '1' (NUMBER1TO9) en línea 7.
 ```
 
 Y si el archivo se termina antes de completar un registro:
