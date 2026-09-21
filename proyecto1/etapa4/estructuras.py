@@ -12,19 +12,13 @@ Se implementan dos hashmaps:
    Permite buscar información utilizando el número de AS, cumple con
    la funcionalidad 2, donde se deben obtener las IP de los peers 
    y los prefijos conocidos por cada uno.
-
-Se mantiene un contador para asignar un identificador único
-a cada registro, este identificador se usa posteriormente en el grafo.
 '''
 
 def crear_estructuras():
-    return { "por_prefijo": {}, "por_numero_as": {}, "siguiente_id": 0 }
+    return { "por_prefijo": {}, "por_numero_as": {} }
 
 
 def agregar_registro(estructuras, registro):
-    registro_id = estructuras["siguiente_id"]
-    estructuras["siguiente_id"] += 1
-
     prefijo = registro['destination_prefix']
     peer_as = registro["peer_as"]
     peer_ip = registro["peer_ip"]
@@ -48,5 +42,3 @@ def agregar_registro(estructuras, registro):
 
     # Guarda el prefijo y el AS Path asociados con el peer
     estructuras["por_numero_as"][peer_as][peer_ip].append({"prefijo": prefijo,"as_path": as_path})
-
-    return registro_id
