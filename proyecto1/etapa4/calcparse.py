@@ -5,6 +5,10 @@ from grafo import crear_grafo, agregar_ruta
 
 error_sintactico = False
 
+# Variables maximas para el timestamp y el AS, ya que son de 4 octetos
+MAX_TIMESTAMP = 2147483647
+AS_VALOR_MAXIMO = 4294967295
+
 def p_archivo(p):
     '''
     archivo : archivo registro
@@ -38,6 +42,14 @@ def p_registro(p):
         # NEWLINE = 14
     peer_as = p[9]
     as_path = p[13]
+
+    # El timestamp no puede pasar del maximo de 4 octetos
+    if p[3] > MAX_TIMESTAMP:
+        p.parser.error_semantico = True
+        print(f"Error semántico en línea {p.lineno(1)}: el timestamp {p[3]} "
+              f"pasa del máximo {MAX_TIMESTAMP}.")
+        p[0] = None
+        return
 
     # Se revisa que el primer elemento del AS Path es un AS individual y no un conjunto
     # ademas que el primer AS sea igual al Peer AS
@@ -101,6 +113,12 @@ def p_numero_as(p):
     numero_as : NUMBER1TO9
               | NUMBER10
     '''
+    # El AS es de 4 octetos, no puede pasar de 2^32 - 1
+    if p[1] > AS_VALOR_MAXIMO:
+        p.parser.error_semantico = True
+        print(f"Error semántico en línea {p.lineno(1)}: el AS {p[1]} "
+              f"pasa del máximo {AS_VALOR_MAXIMO}.")
+
     # Se guarda directamente ya que el lexer ya lo casteo  a int
     p[0] = p[1]
 
