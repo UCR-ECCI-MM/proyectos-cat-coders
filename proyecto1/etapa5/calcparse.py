@@ -20,11 +20,10 @@ def p_archivo(p):
     # Si hay algun fallo descartamos el registro
     if registro is None or error_sintactico or p.parser.error_semantico or lexer.error_lexico:
         return
-    if p.parser.estructuras is not None and p.parser.grafo is not None:
 
-        # Si se lee correctamente el registro se guarda en las estructuras y sus conexiones en el grafo
-        agregar_registro(p.parser.estructuras, registro)
-        agregar_ruta(p.parser.grafo, registro)
+    # Si se lee correctamente el registro se guarda en las estructuras y sus conexiones en el grafo
+    agregar_registro(p.parser.estructuras, registro)
+    agregar_ruta(p.parser.grafo, registro)
 
 def p_registro(p):
     '''
@@ -172,11 +171,6 @@ def analizar_archivo(archivo):
     if error_sintactico or lexer.error_lexico or parser.error_semantico:
         parser.estructuras = None
         parser.grafo = None
-        return None
-
-    # Verificar que los otros modulos esten implementados o no devuelven los contenedores
-    if parser.estructuras is None or parser.grafo is None:
-        print("Error: falta implementar crear_estructuras o crear_grafo para completar la etapa 4.")
         return None
 
     # En caso de que todo este correcto se devuelven ambas partes para que el main pueda acceder a ellas

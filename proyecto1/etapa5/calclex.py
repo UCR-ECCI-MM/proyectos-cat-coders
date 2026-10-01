@@ -1,6 +1,4 @@
 import ply.lex as lex
-import sys
-import os
 
 # List of token names.   This is always required
 tokens = (
@@ -80,36 +78,3 @@ lexer = lex.lex()
 
 # El parser la revisa para no dar por correcto un archivo que el lexer rechazo
 lexer.error_lexico = False
-
-if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("Uso correcto: python calclex.py <archivo.txt>")
-        sys.exit(1)
-
-    archivo = sys.argv[1]
-    os.makedirs("output", exist_ok=True)
-
-    nombre_archivo = os.path.basename(archivo)
-    nombre_salida = os.path.join("output", f"salida_{nombre_archivo}")
-    print(f"\nProcesando '{archivo}', se guarda en: '{nombre_salida}'")
-
-    try:
-        with open(archivo, 'r') as archivo_entrada, open(nombre_salida, 'w') as archivo_salida:
-            data = archivo_entrada.read()
-            if not data.endswith('\n'):
-                data += '\n'
-            lexer.input(data)
-            contador = 0
-            # Tokenize
-            while True:
-                tok = lexer.token()
-                if not tok: break
-                contador += 1
-                archivo_salida.write(f"{tok}\n")
-                #imprimimos 5 para evitar saturar la salida de la terminal
-                if contador <= 5: print(tok)
-
-        print(f"Se guardaron {contador} tokens válidos.")
-
-    except FileNotFoundError:
-        print(f"Error: No se encontró el archivo '{archivo}'.")
