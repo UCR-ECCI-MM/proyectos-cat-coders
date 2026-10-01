@@ -1,5 +1,5 @@
 import ply.yacc as yacc
-from calclex import tokens, lexer
+from lexico import tokens, lexer
 from estructuras import crear_estructuras, agregar_registro
 from grafo import crear_grafo, agregar_ruta
 

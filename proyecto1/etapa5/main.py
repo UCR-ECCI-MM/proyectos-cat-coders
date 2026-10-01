@@ -1,8 +1,7 @@
 import sys
-from calcparse import analizar_archivo
+from sintactico import analizar_archivo
 import aplicacion
 
-# Responsable: Sebas.
 def main(argumentos=None):
     if argumentos is None:
         argumentos = sys.argv[1:]
