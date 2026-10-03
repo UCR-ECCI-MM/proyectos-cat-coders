@@ -1,4 +1,5 @@
 import sys
+import time
 from sintactico import analizar_archivo
 import aplicacion
 
@@ -10,14 +11,18 @@ def main(argumentos=None):
         return 1
 
     print("Analizando archivo, por favor espere...")
+    inicio = time.time()
     resultado = analizar_archivo(argumentos[0])
     if resultado is None:
         return 1
 
-    print('Archivo analizado correctamente.\n')
-    
+    duracion = time.time() - inicio
     estructuras = resultado['estructuras']
     grafo = resultado['grafo']
+    total_prefijos = len(estructuras.get('por_prefijo', {}))
+    total_nodos = len(grafo)
+
+    print(f"Archivo analizado correctamente en {duracion:.2f}s ({total_prefijos:,} prefijos, {total_nodos:,} AS en grafo).\n")
 
     # Menú interactivo
     while True:
@@ -26,7 +31,11 @@ def main(argumentos=None):
         print("2. Buscar información de un AS")
         print("3. Buscar rutas entre dos prefijos")
         print("4. Salir")
-        opcion = input("Seleccione una opción (1-4): ")
+        try:
+            opcion = input("Seleccione una opción (1-4): ")
+        except (EOFError, KeyboardInterrupt):
+            print("\nSaliendo del programa...")
+            break
 
         if opcion == '1':
             aplicacion.anomalias(estructuras)
