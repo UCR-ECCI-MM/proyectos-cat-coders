@@ -2,7 +2,7 @@
 # Aquí va el código de cada uno para el menú principal.
 
 from grafo import buscar_caminos
-from visualizador import imprimir_diagrama_consola, generar_html_rutas, generar_html_tabla_as
+from visualizador import generar_html_rutas, generar_html_tabla_as
 
 
 def anomalias(estructuras):
@@ -252,9 +252,6 @@ def buscar_rutas(grafo, estructuras):
     print(f"\n{GREEN}[+] Se encontraron {total_rutas} ruta(s) disponible(s) entre {BOLD}{entrada_a}{RESET}{GREEN} y {BOLD}{entrada_b}{RESET}{GREEN}:{RESET}")
     if limite_global:
         print(f"{YELLOW}Aviso: Se alcanzó el límite de rutas por par de orígenes para prevenir desbordamiento.{RESET}")
-
-    # Diagrama de flujo visual en consola
-    imprimir_diagrama_consola(origenes_a, origenes_b, [f["raw_ruta"] for f in filas])
 
     # 5. Formato tabular organizado y dinámico
     ancho_num = 6
