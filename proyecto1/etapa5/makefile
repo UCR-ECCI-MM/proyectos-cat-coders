@@ -1,10 +1,9 @@
 PYTHON = python3
 VENV = .venv
 VENV_PYTHON = $(VENV)/bin/python
-PROGRAMA = calclex.py
 MAIN = main.py
 ARCHIVO = input/prueba.txt
-DUMPS = ../etapa2/input
+DUMPS = chunks
 
 .PHONY: setup run run-dump clean clean-all
 
@@ -21,10 +20,10 @@ run: setup
 
 CHUNK = chunk_aa.txt
 run-dump: setup
-	$(VENV_PYTHON) $(PROGRAMA) $(DUMPS)/$(CHUNK)
+	$(VENV_PYTHON) $(MAIN) $(DUMPS)/$(CHUNK)
 
 clean:
-	rm -rf output
+	rm -f visualizador_rutas.html reporte_as.html
 	rm -rf __pycache__
 
 clean-all: clean
