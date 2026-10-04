@@ -6,14 +6,28 @@ from visualizador import imprimir_diagrama_consola, generar_html_rutas, generar_
 
 
 def anomalias(estructuras):
-    print("\n--- 1. Analizando Anomalías ---")
-    
-    # TODO: Integrante 1
-    # 1. Recorrer estructuras["por_prefijo"]
-    # 2. Revisar si len(origenes) > 1 para algún prefijo.
-    # 3. Si pasa, imprimir el prefijo y los AS Path que tienen orígenes distintos.
-    
-    print("Falta programar esta parte...\n")
+    print(f"\n{BOLD}{CYAN}{'=' * 65}{RESET}")
+    print(f"{BOLD}{CYAN}       1. DETECCION DE ANOMALIAS (POSIBLE PREFIX HIJACKING){RESET}")
+    print(f"{BOLD}{CYAN}{'=' * 65}{RESET}")
+
+    total = 0
+    for prefijo, datos in estructuras["por_prefijo"].items():
+        # Si mas de un AS reporta el prefijo como propio es una posible anomalia
+        if len(datos["origenes"]) > 1:
+            total += 1
+            print(f"\n{BOLD}{YELLOW}Prefijo {prefijo}{RESET}: {len(datos['origenes'])} orígenes distintos")
+
+            # Se muestran los AS Path agrupados por su origen, que es el ultimo AS del path
+            for origen in datos["origenes"]:
+                print(f"   {CYAN}Origen {formatear_as_path([origen])}:{RESET}")
+                for ruta in datos["rutas"]:
+                    if ruta[-1] == origen:
+                        print(f"      {MAGENTA}{formatear_as_path(ruta)}{RESET}")
+
+    if total == 0:
+        print(f"{GREEN}No se encontraron prefijos con más de un AS de origen.{RESET}\n")
+    else:
+        print(f"\n{RED}[!] Se encontraron {total} prefijo(s) con más de un AS de origen.{RESET}\n")
 
 
 # Códigos de escape ANSI para darle estilo y color a la terminal
