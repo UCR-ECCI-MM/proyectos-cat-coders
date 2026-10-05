@@ -63,6 +63,7 @@ def es_alcanzable(grafo, origen, destino):
 def buscar_caminos(grafo, origen, destino, limite=200, max_saltos=5):
     # Busca las rutas sin ciclos entre origen y destino: primero las de 1 salto, despues las de 2, y asi hasta max_saltos
     # Las cortas salen primero porque son las mas realistas, y la busqueda no se pierde en caminos largos
+    # Con limite=float("inf") y max_saltos=len(grafo) no hay tope y busca todas las rutas
     # Devuelve las rutas y si se llego al limite
     if origen == destino:
         return [[origen]], False
@@ -71,10 +72,15 @@ def buscar_caminos(grafo, origen, destino, limite=200, max_saltos=5):
         return [], False
 
     rutas = []
-    for saltos in range(1, max_saltos + 1):
-        buscar_con_saltos(grafo, [origen], destino, saltos, rutas, limite)
-        if len(rutas) >= limite:
-            return rutas, True
+    try:
+        for saltos in range(1, max_saltos + 1):
+            buscar_con_saltos(grafo, [origen], destino, saltos, rutas, limite)
+            if len(rutas) >= limite:
+                return rutas, True
+    except KeyboardInterrupt:
+        # Ctrl+C detiene la busqueda y se devuelven las rutas encontradas hasta ese momento
+        print("\nBúsqueda detenida con Ctrl+C.")
+        return rutas, True
     return rutas, False
 
 

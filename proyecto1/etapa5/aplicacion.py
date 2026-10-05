@@ -220,6 +220,18 @@ def buscar_rutas(grafo, estructuras):
     if entrada_a == entrada_b:
         print(f"{DIM}(Nota: Se ingresó el mismo prefijo para A y B).{RESET}")
 
+    # Por defecto se buscan rutas de hasta 5 saltos y 200 por par de origenes.
+    # Si se piden todas no hay tope: termina con archivos pequenos, con un chunk se detiene con Ctrl+C
+    try:
+        opc_todas = input(f"\n{BOLD}¿Buscar todas las rutas, sin límite?{RESET} Con un chunk completo no termina [s/N]: ").strip().lower()
+    except (EOFError, KeyboardInterrupt):
+        opc_todas = 'n'
+    if opc_todas == 's':
+        limite, max_saltos = float("inf"), len(grafo)
+        print(f"{DIM}(Puede presionar Ctrl+C para detener la búsqueda y ver las rutas encontradas hasta ese momento).{RESET}")
+    else:
+        limite, max_saltos = 200, 5
+
     print(f"\n{YELLOW}Buscando rutas en el grafo... por favor espere.{RESET}")
 
     # 4. Buscar todas las rutas posibles en el grafo entre los orígenes de A y B
@@ -229,7 +241,7 @@ def buscar_rutas(grafo, estructuras):
 
     for o_a in origenes_a:
         for o_b in origenes_b:
-            caminos, lim = buscar_caminos(grafo, o_a, o_b)
+            caminos, lim = buscar_caminos(grafo, o_a, o_b, limite, max_saltos)
             if lim:
                 limite_global = True
             for c in caminos:
@@ -251,7 +263,7 @@ def buscar_rutas(grafo, estructuras):
 
     print(f"\n{GREEN}[+] Se encontraron {total_rutas} ruta(s) disponible(s) entre {BOLD}{entrada_a}{RESET}{GREEN} y {BOLD}{entrada_b}{RESET}{GREEN}:{RESET}")
     if limite_global:
-        print(f"{YELLOW}Aviso: Se alcanzó el límite de rutas por par de orígenes para prevenir desbordamiento.{RESET}")
+        print(f"{YELLOW}Aviso: no se muestran todas las rutas posibles, porque se llegó al límite o se detuvo la búsqueda.{RESET}")
 
     # 5. Formato tabular organizado y dinámico
     ancho_num = 6
