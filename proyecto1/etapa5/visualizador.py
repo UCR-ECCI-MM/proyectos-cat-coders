@@ -6,7 +6,7 @@ Genera los archivos HTML para visualizar las rutas entre dos prefijos y la infor
 
 import json
 
-MAX_RUTAS_DIBUJADAS = 30
+MAX_RUTAS_DIBUJADAS = 20
 
 
 def generar_html_rutas(prefijo_a, origenes_a, prefijo_b, origenes_b, rutas):
@@ -40,7 +40,11 @@ def generar_html_rutas(prefijo_a, origenes_a, prefijo_b, origenes_b, rutas):
 
     lista_aristas = []
     for a, b in aristas:
-        lista_aristas.append({"from": a, "to": b})
+        arista = {"from": a, "to": b}
+        # Si los dos AS estan en la misma columna, la flecha se curva para no pasar encima de otros circulos
+        if columnas[a] == columnas[b]:
+            arista["smooth"] = {"type": "curvedCW", "roundness": 0.4}
+        lista_aristas.append(arista)
 
     html = PLANTILLA_RUTAS
     html = html.replace("PREFIJO_A", prefijo_a)
@@ -85,7 +89,7 @@ PLANTILLA_RUTAS = '''<!DOCTYPE html>
   p { font-size: 24px; }
   .origen-a { color: #4dabf7; font-weight: bold; }
   .origen-b { color: #66d9e8; font-weight: bold; }
-  #grafo { width: 100%; height: 600px; border: 1px solid #444444; }
+  #grafo { width: 100%; height: 800px; border: 1px solid #444444; }
 </style>
 </head>
 <body>
@@ -104,7 +108,8 @@ PLANTILLA_RUTAS = '''<!DOCTYPE html>
       font: { face: "Oswald", size: 16, color: "#eeeeee" }
     },
     edges: { arrows: "to", color: "#aaaaaa", smooth: false },
-    layout: { hierarchical: { direction: "LR", levelSeparation: 180 } }
+    layout: { hierarchical: { direction: "LR", levelSeparation: 200, nodeSpacing: 120 } },
+    physics: false
   };
   new vis.Network(document.getElementById("grafo"), { nodes: nodos, edges: aristas }, opciones);
 </script>
