@@ -6,25 +6,36 @@ Genera los archivos HTML para visualizar las rutas entre dos prefijos y la infor
 
 import json
 
+MAX_RUTAS_DIBUJADAS = 30
+
 
 def generar_html_rutas(prefijo_a, origenes_a, prefijo_b, origenes_b, rutas):
-    # Nodos: cada AS que aparece en alguna ruta. Aristas: cada par de AS seguidos en una ruta
-    nodos = set()
+    # Con muchas rutas el grafo es ilegible, por eso solo se dibujan las mas cortas
+    rutas_dibujadas = sorted(rutas, key=len)[:MAX_RUTAS_DIBUJADAS]
+
+    # Cada AS va en la columna del salto en que aparece por primera vez.
+    # Las aristas son cada par de AS seguidos en una ruta
+    columnas = {}
     aristas = set()
-    for ruta in rutas:
+    for ruta in rutas_dibujadas:
         for i in range(len(ruta)):
-            nodos.add(ruta[i])
+            if ruta[i] not in columnas:
+                columnas[ruta[i]] = i
             if i > 0:
                 aristas.add((ruta[i - 1], ruta[i]))
 
+    # El origen de B siempre va en la ultima columna
+    ultima_columna = max(len(ruta) for ruta in rutas_dibujadas) - 1
+
     lista_nodos = []
-    for numero_as in nodos:
-        nodo = {"id": numero_as, "label": str(numero_as)}
+    for numero_as in columnas:
+        nodo = {"id": numero_as, "label": str(numero_as), "level": columnas[numero_as]}
         if numero_as in origenes_a:
             nodo["color"] = {"background": "#1864ab", "border": "#4dabf7"}
         elif numero_as in origenes_b:
             nodo["color"] = {"background": "#66d9e8", "border": "#99e9f2"}
             nodo["font"] = {"color": "#1e1e1e"}
+            nodo["level"] = ultima_columna
         lista_nodos.append(nodo)
 
     lista_aristas = []
@@ -37,6 +48,7 @@ def generar_html_rutas(prefijo_a, origenes_a, prefijo_b, origenes_b, rutas):
     html = html.replace("ORIGENES_A", ", ".join(str(x) for x in origenes_a))
     html = html.replace("ORIGENES_B", ", ".join(str(x) for x in origenes_b))
     html = html.replace("TOTAL_RUTAS", str(len(rutas)))
+    html = html.replace("DIBUJADAS", str(len(rutas_dibujadas)))
     html = html.replace("LISTA_NODOS", json.dumps(lista_nodos))
     html = html.replace("LISTA_ARISTAS", json.dumps(lista_aristas))
 
@@ -78,7 +90,7 @@ PLANTILLA_RUTAS = '''<!DOCTYPE html>
 </head>
 <body>
 <h2>Rutas entre PREFIJO_A y PREFIJO_B</h2>
-<p>Origen de A: <span class="origen-a">ORIGENES_A</span>. Origen de B: <span class="origen-b">ORIGENES_B</span>. Total de rutas: TOTAL_RUTAS.</p>
+<p>Origen de A: <span class="origen-a">ORIGENES_A</span>. Origen de B: <span class="origen-b">ORIGENES_B</span>. Total de rutas: TOTAL_RUTAS. Se dibujan las DIBUJADAS más cortas.</p>
 <div id="grafo"></div>
 <script>
   var nodos = new vis.DataSet(LISTA_NODOS);
@@ -92,7 +104,7 @@ PLANTILLA_RUTAS = '''<!DOCTYPE html>
       font: { face: "Oswald", size: 16, color: "#eeeeee" }
     },
     edges: { arrows: "to", color: "#aaaaaa", smooth: false },
-    physics: { barnesHut: { avoidOverlap: 1 } }
+    layout: { hierarchical: { direction: "LR", levelSeparation: 180 } }
   };
   new vis.Network(document.getElementById("grafo"), { nodes: nodos, edges: aristas }, opciones);
 </script>
