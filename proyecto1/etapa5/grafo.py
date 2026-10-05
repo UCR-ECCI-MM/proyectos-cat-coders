@@ -60,24 +60,10 @@ def es_alcanzable(grafo, origen, destino):
     return False
 
 
-def buscar_caminos(grafo, origen, destino, limite=200, max_profundidad=7):
-    """
-    Encuentra todos los caminos simples (sin ciclos) entre origen y destino
-    utilizando búsqueda en profundidad (DFS) con retroceso (backtracking).
-
-    Parámetros:
-      - grafo: Diccionario de adyacencia AS -> set(AS vecinos).
-      - origen: Número de AS inicial (int).
-      - destino: Número de AS final (int).
-      - limite: Máximo número de rutas a recolectar para evitar explosión combinatoria.
-      - max_profundidad: Cota de saltos AS máximos. En BGP los caminos reales
-                        rara vez exceden 5-6 saltos. Evita explorar ramas irrelevantes
-                        de decenas de saltos en routers núcleo con miles de conexiones.
-
-    Retorna:
-      (rutas, limite_alcanzado): Lista de rutas (listas de ints) y booleano indicando
-                                  si se alcanzó el límite de seguridad.
-    """
+def buscar_caminos(grafo, origen, destino, limite=200, max_saltos=5):
+    # Busca las rutas sin ciclos entre origen y destino: primero las de 1 salto, despues las de 2, y asi hasta max_saltos
+    # Las cortas salen primero porque son las mas realistas, y la busqueda no se pierde en caminos largos
+    # Devuelve las rutas y si se llego al limite
     if origen == destino:
         return [[origen]], False
 
@@ -85,34 +71,25 @@ def buscar_caminos(grafo, origen, destino, limite=200, max_profundidad=7):
         return [], False
 
     rutas = []
-    visitados = {origen}
-    camino = [origen]
-    limite_alcanzado = False
-
-    def dfs(nodo):
-        nonlocal limite_alcanzado
+    for saltos in range(1, max_saltos + 1):
+        buscar_con_saltos(grafo, [origen], destino, saltos, rutas, limite)
         if len(rutas) >= limite:
-            limite_alcanzado = True
+            return rutas, True
+    return rutas, False
+
+
+def buscar_con_saltos(grafo, camino, destino, saltos, rutas, limite):
+    # DFS que solo guarda las rutas que llegan al destino con exactamente esa cantidad de saltos
+    nodo = camino[-1]
+    if len(camino) == saltos:
+        # Ultimo salto: basta con preguntar si el destino es vecino
+        if destino in grafo.get(nodo, ()) and len(rutas) < limite:
+            rutas.append(camino + [destino])
+        return
+
+    for vecino in grafo.get(nodo, ()):
+        if len(rutas) >= limite:
             return
-
-        if len(camino) > max_profundidad:
-            return
-
-        for vecino in grafo.get(nodo, ()):
-            if vecino == destino:
-                rutas.append(list(camino) + [destino])
-                if len(rutas) >= limite:
-                    limite_alcanzado = True
-                    return
-            elif vecino not in visitados:
-                if len(camino) < max_profundidad:
-                    visitados.add(vecino)
-                    camino.append(vecino)
-                    dfs(vecino)
-                    camino.pop()
-                    visitados.remove(vecino)
-                    if limite_alcanzado:
-                        return
-
-    dfs(origen)
-    return rutas, limite_alcanzado
+        # Sin ciclos: no se repite un AS del camino ni se pasa por el destino antes de tiempo
+        if vecino != destino and vecino not in camino:
+            buscar_con_saltos(grafo, camino + [vecino], destino, saltos, rutas, limite)
