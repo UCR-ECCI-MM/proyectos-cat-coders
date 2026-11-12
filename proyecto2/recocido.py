@@ -1,3 +1,4 @@
+import math
 import random
 import sys
 
@@ -43,13 +44,34 @@ def intercambiar(tablero, original):
     tablero[f1][c1], tablero[f2][c2] = tablero[f2][c2], tablero[f1][c1]
     return celda1, celda2
 
+# Resuelve el sudoku con recocido simulado y retorna el tablero
+def resolver(tablero):
+    actual = llenar_cajas(tablero)
+    costo = contar_faltantes(actual)
+    temperatura = 1.0
+    for _ in range(100):
+        for _ in range(500):
+            if costo == 0:
+                return actual
+            cambio = intercambiar(actual, tablero)
+            if cambio is None:
+                continue
+            nuevo_costo = contar_faltantes(actual)
+            delta = nuevo_costo - costo
+            if delta <= 0 or random.random() < math.exp(-delta / temperatura):
+                costo = nuevo_costo
+            else:
+                (f1, c1), (f2, c2) = cambio
+                actual[f1][c1], actual[f2][c2] = actual[f2][c2], actual[f1][c1]
+        temperatura *= 0.95
+    return actual
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Uso: python recocido.py <archivo>")
         sys.exit(1)
     tablero = leer_sudoku(sys.argv[1])
-    resultado = llenar_cajas(tablero)
-    intercambiar(resultado, tablero)
+    resultado = resolver(tablero)
     for fila in resultado:
         print(fila)
     print("Numeros que faltan:", contar_faltantes(resultado))
