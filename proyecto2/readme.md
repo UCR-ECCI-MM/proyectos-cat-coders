@@ -18,9 +18,32 @@ del 1 al n² una sola vez. Se trabaja con sudokus de 9 × 9 y de 16 × 16.
 
 ## Archivos de entrada
 
-Los sudokus de prueba están en `input/`. Cada línea del archivo es una fila del sudoku, con los
-números separados por espacios. Las celdas vacías se escriben con 0.
+Los sudokus de prueba están en `input/`: uno de 9 × 9 y dos de 16 × 16. Cada línea del archivo
+es una fila del sudoku, con los números separados por espacios. Las celdas vacías se escriben
+con 0.
 
 ## Cómo ejecutar
 
-Pendiente. Se completa cuando el programa esté listo.
+Solo se necesita Python 3, sin librerías externas. En Linux el comando es `python3` y en
+Windows es `python`. Los comandos se corren desde la carpeta `proyecto2`:
+
+```bash
+python3 main.py <tecnica> <archivo>
+```
+
+Las técnicas son `fuerza_bruta`, `mrv` y `recocido`. Por ejemplo:
+
+```bash
+python3 main.py recocido input/sudoku_9x9_1.txt
+```
+
+El programa imprime el tablero al que llegó, si quedó resuelto y cuánto tardó. Si no lo
+resolvió, dice cuántos números faltan en sus filas, columnas y cajas. Ese número mide qué tan
+cerca quedó de la solución, y 0 quiere decir resuelto.
+
+Cada técnica también se puede correr sola, por ejemplo `python3 mrv.py input/sudoku_16x16_1.txt`.
+La fuerza bruta recibe además un límite de tiempo en segundos, que por defecto es 60:
+
+```bash
+python3 fuerza_bruta.py input/sudoku_16x16_2.txt 10
+```
