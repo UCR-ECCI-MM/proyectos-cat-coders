@@ -1,5 +1,6 @@
 import random
 import sys
+import time
 
 from sudoku import contar_faltantes, leer_sudoku, puede_ir
 
@@ -23,10 +24,15 @@ def buscar_mejor_celda(tablero):
     return mejor
 
 # Intenta llenar el sudoku eligiendo siempre la celda con menos opciones y se reinicia si falla
-def resolver(tablero):
+def resolver(tablero, segundos=60):
+    mejor = [fila[:] for fila in tablero]
+    menor_faltantes = contar_faltantes(mejor)
+    limite = time.perf_counter() + segundos
     for _ in range(100):
+        if time.perf_counter() > limite:
+            break
         copia = [fila[:] for fila in tablero]
-        while True:
+        while time.perf_counter() <= limite:
             celda = buscar_mejor_celda(copia)
             if celda is None:
                 return copia
@@ -34,14 +40,21 @@ def resolver(tablero):
             if len(opciones) == 0:
                 break
             copia[fila][columna] = random.choice(opciones)
-    return copia
+        faltantes = contar_faltantes(copia)
+        if faltantes < menor_faltantes:
+            menor_faltantes = faltantes
+            mejor = copia
+    return mejor
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Uso: python mrv.py <archivo>")
+    if len(sys.argv) not in (2, 3):
+        print("Uso: python mrv.py <archivo> [segundos]")
         sys.exit(1)
     tablero = leer_sudoku(sys.argv[1])
-    resultado = resolver(tablero)
+    segundos = 60
+    if len(sys.argv) == 3:
+        segundos = float(sys.argv[2])
+    resultado = resolver(tablero, segundos)
     for fila in resultado:
         print(fila)
     print("Numeros que faltan:", contar_faltantes(resultado))
