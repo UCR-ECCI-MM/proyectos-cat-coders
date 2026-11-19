@@ -56,6 +56,21 @@ def guardar_csv(filas, ruta):
         escritor.writeheader()
         escritor.writerows(filas)
 
+# Imprime, por tecnica y sudoku, cuantas corridas resolvio y los promedios
+def resumir(filas):
+    grupos = {}
+    for fila in filas:
+        clave = (fila["tecnica"], fila["sudoku"])
+        if clave not in grupos:
+            grupos[clave] = []
+        grupos[clave].append(fila)
+    print("tecnica, sudoku, resueltas, faltantes promedio, tiempo promedio")
+    for (tecnica, sudoku), grupo in grupos.items():
+        resueltas = sum(fila["resuelto"] for fila in grupo)
+        faltantes = sum(fila["faltantes"] for fila in grupo) / len(grupo)
+        tiempo = sum(fila["tiempo"] for fila in grupo) / len(grupo)
+        print(f"{tecnica}, {sudoku}, {resueltas}/{len(grupo)}, {faltantes:.1f}, {tiempo:.3f} s")
+
 if __name__ == "__main__":
     if len(sys.argv) != 4:
         print("Uso: python experimentos.py <corridas> <segundos> <archivo.csv>")
@@ -67,3 +82,4 @@ if __name__ == "__main__":
         filas += experimentar(archivo, corridas, segundos)
     guardar_csv(filas, sys.argv[3])
     print("Resultados guardados en", sys.argv[3])
+    resumir(filas)
