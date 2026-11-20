@@ -19,16 +19,18 @@ def buscar_mejor_celda(tablero):
         for columna in range(len(tablero)):
             if tablero[fila][columna] == 0:
                 opciones = opciones_celda(tablero, fila, columna)
+                if len(opciones) == 0:
+                    return fila, columna, opciones
                 if mejor is None or len(opciones) < len(mejor[2]):
                     mejor = (fila, columna, opciones)
     return mejor
 
 # Intenta llenar el sudoku eligiendo siempre la celda con menos opciones y se reinicia si falla
-def resolver(tablero, segundos=60):
+def resolver(tablero, segundos=60, reinicios=100):
     mejor = [fila[:] for fila in tablero]
     menor_faltantes = contar_faltantes(mejor)
     limite = time.perf_counter() + segundos
-    for _ in range(100):
+    for _ in range(reinicios):
         if time.perf_counter() > limite:
             break
         copia = [fila[:] for fila in tablero]
