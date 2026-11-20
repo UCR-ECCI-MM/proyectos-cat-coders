@@ -14,14 +14,17 @@ TECNICAS = {
 }
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3 or sys.argv[1] not in TECNICAS:
-        print("Uso: python main.py <tecnica> <archivo>")
+    if len(sys.argv) not in (3, 4) or sys.argv[1] not in TECNICAS:
+        print("Uso: python main.py <tecnica> <archivo> [segundos]")
         print("Tecnicas:", ", ".join(TECNICAS))
         sys.exit(1)
     resolver = TECNICAS[sys.argv[1]]
     tablero = leer_sudoku(sys.argv[2])
+    segundos = 60
+    if len(sys.argv) == 4:
+        segundos = float(sys.argv[3])
     inicio = time.perf_counter()
-    resultado = resolver(tablero)
+    resultado = resolver(tablero, segundos)
     segundos = time.perf_counter() - inicio
     for fila in resultado:
         print(fila)
