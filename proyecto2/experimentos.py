@@ -5,12 +5,14 @@ import time
 
 import fuerza_bruta
 import mrv
+import recocido
 from sudoku import contar_faltantes, leer_sudoku
 
 # Tecnicas que se comparan, todas reciben el limite de tiempo
 TECNICAS = {
     "fuerza_bruta": fuerza_bruta.resolver,
     "mrv": mrv.resolver,
+    "recocido": recocido.resolver,
 }
 
 # Columnas del CSV, una fila por corrida
