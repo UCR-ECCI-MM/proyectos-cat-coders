@@ -28,21 +28,22 @@ Solo se necesita Python 3, sin librerías externas. En Linux el comando es `pyth
 Windows es `python`. Los comandos se corren desde la carpeta `proyecto2`:
 
 ```bash
-python3 main.py <tecnica> <archivo>
+python3 main.py <tecnica> <archivo> [segundos]
 ```
 
-Las técnicas son `fuerza_bruta`, `mrv` y `recocido`. Por ejemplo:
+Las técnicas son `fuerza_bruta`, `mrv` y `recocido`. El último argumento es el límite de tiempo en
+segundos, que por defecto es 60. Si se acaba, la técnica devuelve el mejor tablero al que llegó. Por
+ejemplo, el recocido con un límite de 10 segundos:
 
 ```bash
-python3 main.py recocido input/sudoku_9x9_1.txt
+python3 main.py recocido input/sudoku_9x9_1.txt 10
 ```
 
 El programa imprime el tablero al que llegó, si quedó resuelto y cuánto tardó. Si no lo
 resolvió, dice cuántos números faltan en sus filas, columnas y cajas. Ese número mide qué tan
 cerca quedó de la solución, y 0 quiere decir resuelto.
 
-Cada técnica también se puede correr sola, por ejemplo `python3 mrv.py input/sudoku_16x16_1.txt`.
-La fuerza bruta recibe además un límite de tiempo en segundos, que por defecto es 60:
+Cada técnica también se puede correr sola, con el mismo límite opcional:
 
 ```bash
 python3 fuerza_bruta.py input/sudoku_16x16_2.txt 10
