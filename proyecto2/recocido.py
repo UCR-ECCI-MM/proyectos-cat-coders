@@ -1,5 +1,6 @@
 import math
 import random
+import statistics
 import sys
 import time
 
@@ -45,8 +46,22 @@ def intercambiar(tablero, original):
     tablero[f1][c1], tablero[f2][c2] = tablero[f2][c2], tablero[f1][c1]
     return celda1, celda2
 
+# Calcula la temperatura inicial con la desviacion estandar de intercambios de prueba
+def temperatura_inicial(tablero, pruebas=100):
+    actual = llenar_cajas(tablero)
+    costos = [contar_faltantes(actual)]
+    for _ in range(pruebas):
+        if intercambiar(actual, tablero) is not None:
+            costos.append(contar_faltantes(actual))
+    if len(costos) < 2:
+        return 1.0
+    desviacion = statistics.stdev(costos)
+    return desviacion if desviacion > 0 else 1.0
+
 # Resuelve el sudoku con recocido simulado y retorna el mejor tablero encontrado
-def resolver(tablero, segundos=60, t0=1.0, alfa=0.95, iteraciones=500):
+def resolver(tablero, segundos=60, t0=1.0, alfa=0.95, iteraciones=500, reinicio=20):
+    if t0 is None:
+        t0 = temperatura_inicial(tablero)
     limite = time.perf_counter() + segundos
     actual = llenar_cajas(tablero)
     costo = contar_faltantes(actual)
@@ -80,7 +95,7 @@ def resolver(tablero, segundos=60, t0=1.0, alfa=0.95, iteraciones=500):
             sin_mejorar = 0
         else:
             sin_mejorar += 1
-        if sin_mejorar == 20:
+        if sin_mejorar >= reinicio:
             actual = llenar_cajas(tablero)
             costo = contar_faltantes(actual)
             if costo < menor_costo:
