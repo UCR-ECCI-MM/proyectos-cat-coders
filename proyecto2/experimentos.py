@@ -1,10 +1,12 @@
 import csv
 import os
+import random
 import sys
 import time
 import tracemalloc
 
 import fuerza_bruta
+import generador
 import mrv
 import recocido
 from sudoku import contar_faltantes, leer_sudoku
@@ -25,15 +27,44 @@ VARIANTES = {
                  {"iteraciones": 100}, {"iteraciones": 2000}, {"reinicio": 5}, {"reinicio": 100}],
 }
 
+# Sudokus que se generan con la palabra generados: cada tamano con cada proporcion p de pistas,
+# y varias semillas para no depender de un solo sudoku
+TAMANOS = [4, 9, 16]
+PROPORCIONES = [0.2, 0.3, 0.4, 0.5, 0.6]
+SEMILLAS = [1, 2, 3]
+
 # Palabras que se pueden agregar al final del comando
-OPCIONES = ["parametros", "memoria"]
+OPCIONES = ["parametros", "memoria", "generados"]
 
 # Columnas del CSV, una fila por corrida
-COLUMNAS = ["tecnica", "parametros", "sudoku", "tamano", "vacias", "limite", "corrida", "faltantes", "resuelto", "tiempo", "memoria_kb"]
+COLUMNAS = ["tecnica", "parametros", "sudoku", "tamano", "p", "semilla", "vacias", "limite", "corrida",
+            "faltantes", "resuelto", "tiempo", "memoria_kb"]
 
 # Retorna cuantas celdas vacias tiene el tablero
 def contar_vacias(tablero):
     return sum(fila.count(0) for fila in tablero)
+
+# Lee los sudokus de input y retorna el nombre, el tablero, la proporcion de pistas y la semilla de cada uno
+def sudokus_de_input():
+    sudokus = []
+    for archivo in sorted(os.listdir("input")):
+        tablero = leer_sudoku(os.path.join("input", archivo))
+        celdas = len(tablero) * len(tablero)
+        p = round((celdas - contar_vacias(tablero)) / celdas, 2)
+        sudokus.append((archivo, tablero, p, ""))
+    return sudokus
+
+# Genera un sudoku por cada tamano, proporcion y semilla, con los mismos datos que sudokus_de_input
+def sudokus_generados():
+    sudokus = []
+    for tamano in TAMANOS:
+        for p in PROPORCIONES:
+            for semilla in SEMILLAS:
+                tablero = generador.generar(tamano, p, semilla)
+                sudokus.append((f"generado_{tamano}x{tamano}_p{p}_s{semilla}", tablero, p, semilla))
+    # generar fija la semilla, asi que se vuelve al azar para que las corridas no se repitan
+    random.seed()
+    return sudokus
 
 # Retorna los parametros como texto, por ejemplo "t0=0.5"
 def describir(parametros):
@@ -58,8 +89,8 @@ def correr(resolver, tablero, segundos, parametros, medir_memoria):
     return contar_faltantes(resultado), tiempo, memoria
 
 # Corre cada tecnica varias veces con cada limite y retorna una fila por corrida
-def experimentar(archivo, corridas, limites, probar_parametros, medir_memoria):
-    tablero = leer_sudoku(os.path.join("input", archivo))
+def experimentar(sudoku, corridas, limites, probar_parametros, medir_memoria):
+    nombre, tablero, p, semilla = sudoku
     filas = []
     for tecnica, resolver in TECNICAS.items():
         variantes = VARIANTES[tecnica] if probar_parametros else [{}]
@@ -67,12 +98,14 @@ def experimentar(archivo, corridas, limites, probar_parametros, medir_memoria):
             for segundos in limites:
                 for corrida in range(1, corridas + 1):
                     faltantes, tiempo, memoria = correr(resolver, tablero, segundos, parametros, medir_memoria)
-                    print(tecnica, describir(parametros), archivo, "limite", segundos, "corrida", corrida, "faltan", faltantes, f"{tiempo:.3f} s", memoria)
+                    print(tecnica, describir(parametros), nombre, "limite", segundos, "corrida", corrida, "faltan", faltantes, f"{tiempo:.3f} s", memoria)
                     filas.append({
                         "tecnica": tecnica,
                         "parametros": describir(parametros),
-                        "sudoku": archivo,
+                        "sudoku": nombre,
                         "tamano": len(tablero),
+                        "p": p,
+                        "semilla": semilla,
                         "vacias": contar_vacias(tablero),
                         "limite": segundos,
                         "corrida": corrida,
@@ -110,16 +143,18 @@ def resumir(filas):
 if __name__ == "__main__":
     opciones = sys.argv[4:]
     if len(sys.argv) < 4 or any(opcion not in OPCIONES for opcion in opciones):
-        print("Uso: python experimentos.py <corridas> <segundos> <archivo.csv> [parametros] [memoria]")
+        print("Uso: python experimentos.py <corridas> <segundos> <archivo.csv> [parametros] [memoria] [generados]")
         print("Se pueden dar varios limites separados por coma, por ejemplo 1,5,10")
         print("Con la palabra parametros tambien prueba otros valores de la MRV y el recocido")
         print("Con la palabra memoria tambien mide la memoria pico, pero las corridas son mas lentas")
+        print("Con la palabra generados usa sudokus del generador en vez de los de input")
         sys.exit(1)
     corridas = int(sys.argv[1])
     limites = [float(segundos) for segundos in sys.argv[2].split(",")]
+    sudokus = sudokus_generados() if "generados" in opciones else sudokus_de_input()
     filas = []
-    for archivo in sorted(os.listdir("input")):
-        filas += experimentar(archivo, corridas, limites, "parametros" in opciones, "memoria" in opciones)
+    for sudoku in sudokus:
+        filas += experimentar(sudoku, corridas, limites, "parametros" in opciones, "memoria" in opciones)
     guardar_csv(filas, sys.argv[3])
     print("Resultados guardados en", sys.argv[3])
     resumir(filas)
