@@ -20,11 +20,21 @@ TECNICAS = {
 
 # Otros valores que se prueban, cambiando un parametro a la vez
 # El diccionario vacio corre la tecnica con sus valores por defecto
+# Recocido: t0=None y 120, alfa 0.75 y 0.99, y las iteraciones salen de Lewis (2007) y De Souza y Romero (2013)
+# Lewis usa (celdas vacias)^2 iteraciones: unas 2600 en el 9x9 y unas 17000 en los 16x16
+# Las ultimas de cada lista combinan los mejores valores de la prueba de uno a la vez
 VARIANTES = {
     "fuerza_bruta": [{}],
-    "mrv": [{}, {"reinicios": 1000}, {"reinicios": 10000}, {"celda_azar": True}, {"valor_azar": False}],
-    "recocido": [{}, {"t0": None}, {"t0": 0.5}, {"t0": 5.0}, {"alfa": 0.9}, {"alfa": 0.99},
-                 {"iteraciones": 100}, {"iteraciones": 2000}, {"reinicio": 5}, {"reinicio": 100}],
+    "mrv": [{}, {"reinicios": 1000}, {"reinicios": 10000}, {"celda_azar": True}, {"valor_azar": False},
+            {"celda_azar": True, "reinicios": 1000}, {"celda_azar": True, "reinicios": 10000}],
+    "recocido": [{}, {"t0": None}, {"t0": 0.5}, {"t0": 2.0}, {"t0": 5.0}, {"t0": 120.0},
+                 {"alfa": 0.75}, {"alfa": 0.9}, {"alfa": 0.99},
+                 {"iteraciones": 10}, {"iteraciones": 260}, {"iteraciones": 2600}, {"iteraciones": 17000},
+                 {"reinicio": 10}, {"reinicio": 50}, {"reinicio": 100},
+                 {"alfa": 0.99, "reinicio": 100},
+                 {"t0": 0.5, "alfa": 0.9}, {"t0": 0.5, "reinicio": 100}, {"alfa": 0.9, "reinicio": 100},
+                 {"t0": 0.5, "alfa": 0.9, "reinicio": 100},
+                 {"t0": 0.5, "alfa": 0.9, "reinicio": 100, "iteraciones": 2000}],
 }
 
 # Sudokus que se generan con la palabra generados: cada tamano con cada proporcion p de pistas,
