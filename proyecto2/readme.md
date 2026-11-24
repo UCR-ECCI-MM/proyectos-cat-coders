@@ -88,3 +88,6 @@ Cada fila del CSV trae la técnica, los parámetros, el sudoku, su tamaño, la p
 corrida, los números que faltan, si quedó resuelto (1 o 0), el tiempo en segundos y la memoria en
 KB (vacía si no se pidió). Al final se imprime un resumen con cuántas corridas resolvió cada técnica
 y los promedios.
+
+Los CSV de las corridas que usamos en el análisis están en `resultados/`. Su readme explica qué se
+probó en cada uno.
