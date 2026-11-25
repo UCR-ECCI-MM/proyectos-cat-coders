@@ -34,7 +34,7 @@ def buscar_mejor_celda(tablero, celda_azar=False):
     return mejores[0]
 
 # Intenta llenar el sudoku eligiendo siempre la celda con menos opciones y se reinicia si falla
-def resolver(tablero, segundos=60, reinicios=100, celda_azar=False, valor_azar=True):
+def resolver(tablero, segundos=60, reinicios=1000, celda_azar=True, valor_azar=True):
     mejor = [fila[:] for fila in tablero]
     menor_faltantes = contar_faltantes(mejor)
     limite = time.perf_counter() + segundos

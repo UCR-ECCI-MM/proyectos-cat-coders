@@ -59,7 +59,7 @@ def temperatura_inicial(tablero, pruebas=100):
     return desviacion if desviacion > 0 else 1.0
 
 # Resuelve el sudoku con recocido simulado y retorna el mejor tablero encontrado
-def resolver(tablero, segundos=60, t0=1.0, alfa=0.95, iteraciones=500, reinicio=20):
+def resolver(tablero, segundos=60, t0=0.5, alfa=0.9, iteraciones=500, reinicio=20):
     if t0 is None:
         t0 = temperatura_inicial(tablero)
     limite = time.perf_counter() + segundos
