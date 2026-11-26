@@ -62,6 +62,27 @@ Cada técnica también se puede correr sola, con el mismo límite opcional:
 python3 fuerza_bruta.py input/sudoku_16x16_2.txt 10
 ```
 
+## Menú y makefile
+
+`menu.py` corre lo mismo sin escribir los comandos. La opción 1 corre las tres técnicas en el
+sudoku de 9 × 9 con 30 segundos, y la opción 2 en el 16 × 16 #2 con 10 segundos. Al final de cada
+una sale un resumen con lo que logró cada técnica y cuánto tardó. La opción 3 deja escoger la
+técnica, el sudoku de `input/` y el límite. El tablero se imprime con los números nuevos en azul.
+
+```bash
+python3 menu.py
+```
+
+El `makefile` abre el mismo menú con `make`, y con `make run` corre una sola técnica. Si no se
+indican, usa la MRV, el sudoku de 9 × 9 y 30 segundos:
+
+```bash
+make
+make run TECNICA=recocido ARCHIVO=input/sudoku_16x16_2.txt SEGUNDOS=10
+```
+
+En Windows el `makefile` usa `python` en vez de `python3`.
+
 ## Experimentos
 
 `experimentos.py` corre las tres técnicas varias veces sobre cada sudoku de `input/`, con el mismo
